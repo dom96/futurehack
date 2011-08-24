@@ -4,6 +4,19 @@
 #include <SFML/Graphics.hpp>
 
 #include <world.hpp>
+#include <maths.hpp>
+
+struct Player {
+  Player();
+  void Load(sf::Texture &entities);
+  void MouseInput(sf::Vector2f cursor);
+  void CheckInput(sf::RenderWindow &win);
+  void Move(float x, float y);
+
+
+  EVector mouse; // Vector from the middle of player to the mouse position.
+  sf::Sprite sp;
+};
 
 struct Game {
   Game();
@@ -20,11 +33,13 @@ private:
   sf::Clock fpsClock; // Clock for measuring FPS.
   int frames; // A counter of frames rendered.
   sf::Font entityFont; // Font used for entities: player, enemies etc.
-  sf::Text player; // TODO: Make this a struct when we need to store more info.
+  sf::Texture entities; // Entities texture
+  Player player;
   sf::Text fpsText;
   bool running;
   World world;
 };
+
 
 
 #endif // GAME_HPP

@@ -29,23 +29,28 @@ float AngleToPoint(sf::FloatRect objectSize, sf::Vector2f point,
                    sf::Vector2f left)
 {
     // I'm very proud of this function. Too bad the `acos` way doesn't work.
+    // TODO: Why do I not need to add half of the height to the origin?
+    // -- I think I get it now. The lines are parallel yielding 0 degrees.
 
     // Get left if `left` is (-1, -1)
     if (left == sf::Vector2f(-1.f, -1.f))
     {
         left = sf::Vector2f(0,
-                            objectSize.Top + (objectSize.Height / 2));
+                            objectSize.Top);
     }
     
     if (!(left.x == 0 or left.y == 0))
         assert(false);
     
+    //cout << objectSize.Left << " " << objectSize.Top << " " 
+    //     << objectSize.Width << " " << objectSize.Height << endl;
+ 
     // Create two EVectors. The origin will be the middle of the player.
-    sf::Vector2f origin = sf::Vector2f(objectSize.Left + (objectSize.Width / 2),
-                                       objectSize.Top + (objectSize.Height / 2));
+    sf::Vector2f origin = sf::Vector2f(objectSize.Left,
+                                       objectSize.Top);
 
-    EVector a = EVector(origin, point, sf::Vector2f(-1,-1));
-    EVector b = EVector(origin, left, sf::Vector2f(-1,0));
+    EVector a = EVector(origin, point, 0);
+    EVector b = EVector(origin, left, 0);
     
     // Calculate the angle between the two points.
     /*
@@ -69,14 +74,20 @@ float AngleToPoint(sf::FloatRect objectSize, sf::Vector2f point,
         
     //cout << thetaAB << endl;
     float angle = thetaAB * (180 / M_PI);
-    //cout << angle << endl;
+    cout << angle << endl;
     return angle;
 }
 
-float inverseAngle(float angle)
+float CalcAngle(EVector v)
 {
-  if (angle > 0)
-    return 0 - angle;
+  float theta = atan2(v.origin.y - v.final.y, v.origin.x - v.final.x);
+  return theta * (180 / M_PI);
+}
+
+float inverse(float num)
+{
+  if (num > 0)
+    return 0 - num;
   else
-    return abs(angle);
+    return abs(num);
 }

@@ -9,21 +9,17 @@
 struct EVector {
     sf::Vector2f origin; // First point.
     sf::Vector2f final; // Final point.
-    sf::Vector2f direction; // Where this vector is going.
+    float direction; // Where this vector is going.
     
-    EVector(sf::Vector2f origin, sf::Vector2f final, sf::Vector2f direction);
+    EVector(sf::Vector2f origin, sf::Vector2f final, float direction);
+    void CalcDir();
 }; 
-
-const sf::Vector3f e1 = sf::Vector3f(1.f, 0.f, 0.f);
-const sf::Vector3f e2 = sf::Vector3f(0.f, 1.f, 0.f);
-const sf::Vector3f e3 = sf::Vector3f(0.f, 0.f, 1.f);
-
-// TODO: Scalar multiplication.
 
 // Otherwise known as the "magnitude"
 float euclideanNorm(EVector j);
 float dotProduct(EVector j, EVector i);
-EVector normalize(EVector j);
-
+sf::Vector2f normalize(EVector j);
+EVector scalarMult(EVector j, int i);
+void add(EVector *j, int len);
 
 #endif // MATH_HPP

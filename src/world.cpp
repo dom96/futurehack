@@ -27,10 +27,11 @@ World::World(int seed)
   levels = new Level[maxLevels];
   // TODO: Create all levels at once?
   // Create current level.
-  levels[currentLevel].Generate(currentLevel);
-  
-  mapTexture.Create(levels[currentLevel].tilesCountX * 10,
-                    levels[currentLevel].tilesCountY * 10);
+  //levels[currentLevel].Generate(currentLevel);
+  levels[currentLevel].Load(currentLevel);
+
+  mapTexture.Create(levels[currentLevel].levelWidth * TILE_WIDTH,
+                    levels[currentLevel].levelHeight * TILE_HEIGHT);
   mapTexture.Clear();
   DrawMap();
 }
@@ -57,9 +58,9 @@ void World::DrawMap()
   sf::Color color = sf::Color::Green;
   sf::Shape tile;
   int tileCount = 0;
-  for (int x = 0; x < levels[currentLevel].tilesCountX; x++)
+  for (int x = 0; x < levels[currentLevel].levelWidth; x++)
   {
-    for (int y = 0; y < levels[currentLevel].tilesCountY; y++)
+    for (int y = 0; y < levels[currentLevel].levelHeight; y++)
     {
       switch (levels[currentLevel].tiles[x][y]) {
         case TileNone: 

@@ -7,32 +7,31 @@
 #include <game.hpp>
 
 using namespace std;
+const float initialPlayerX = 400.f;
+const float initialPlayerY = 300.f;
 
 Game::Game() :
   running(false),
   frames(0)
 { 
-  const float initialPlayerX = 400.f;
-  const float initialPlayerY = 300.f;
 
   // Create & initialize the window.
-  win.Create(sf::VideoMode(800, 600), "Futurehack");
+  win.Create(sf::VideoMode(800, 600), "Futurehack",
+             sf::Style::Close | sf::Style::Titlebar);
   win.SetFramerateLimit(60);
-  
+
   entityFont.LoadFromFile("resources/Monospace.ttf");
   
   // Init camera
   camera.Reset(sf::FloatRect(0, 0, 800, 600));
   camera.SetCenter(initialPlayerX, initialPlayerY);
   
-  // Init drawables
-  player = sf::Text("@");
-  player.SetFont(entityFont);
-  player.SetX(initialPlayerX); player.SetY(initialPlayerY);
-  player.SetCharacterSize(14);
-  sf::FloatRect playerSize = player.GetRect();
-  player.SetOrigin(playerSize.Width / 2, playerSize.Height / 2);
+  entities.LoadFromFile("resources/entities.png");
+  entities.SetSmooth(true);
   
+  // Init drawables
+  player.Load(entities);
+    
   fpsText = sf::Text("");
   fpsText.SetX(5.f); fpsText.SetY(5.f);
   fpsText.SetCharacterSize(16);
@@ -75,11 +74,12 @@ void Game::CheckEvents()
       case sf::Event::MouseMoved:
         sf::Vector2f pos = sf::Vector2f(event.MouseMove.X,
                                         event.MouseMove.Y);
-        float angle = AngleToPoint(player.GetRect(), pos);
-        player.SetRotation(angle);
-        break;
+        player.MouseInput(pos);
+        break; 
     }
   }
+  player.CheckInput(win);
+  camera.SetCenter(player.sp.GetPosition());
 }
 
 void Game::Update()
@@ -95,7 +95,6 @@ void Game::Update()
   frames++;
   
   world.Update();
-  
 }
 
 void Game::Draw()
@@ -106,13 +105,53 @@ void Game::Draw()
   mapSprite.SetPosition(0, 0);
   win.Draw(mapSprite);
   
-  win.Draw(player);
-
-  sf::Shape rect = sf::Shape::Rectangle(360, 260, 10, 10, sf::Color::White);
-  win.Draw(rect);
+  win.Draw(player.sp);
   
   // Camera independent drawing - HUD etc.
   win.SetView(win.GetDefaultView());
   
   win.Draw(fpsText);
+}
+
+Player::Player() :
+  mouse(sf::Vector2f(0, 0), sf::Vector2f(0, 0), 0)
+{ }
+
+void Player::Load(sf::Texture &entities)
+{
+  sp.SetTexture(entities);
+  sp.SetSubRect(sf::IntRect(3, 3, 64, 64));
+  sp.SetX(initialPlayerX); sp.SetY(initialPlayerY);
+  mouse.origin.x = initialPlayerX; mouse.origin.y = initialPlayerY;
+  //sf::FloatRect playerSize = player.GetRect();
+  sp.SetOrigin(32, 32);
+}
+
+void Player::MouseInput(sf::Vector2f cursor)
+{
+  mouse.final = cursor;
+  mouse.CalcDir();
+  
+  float angle = CalcAngle(mouse);
+  sp.SetRotation(angle);
+}
+
+void Player::CheckInput(sf::RenderWindow &win)
+{
+
+  float multiplier = 110 * (win.GetFrameTime() / 1000.f);
+  float xaxis = multiplier * cos(mouse.direction);
+  float yaxis = multiplier * sin(mouse.direction);
+
+  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
+  {
+    Move(xaxis, yaxis);
+  }
+}
+
+void Player::Move(float x, float y)
+{
+  sp.Move(x, y);
+  //mouse.origin.x += x;
+  //mouse.origin.y += y;
 }

@@ -1,12 +1,22 @@
+#include <iostream>
+
 #include <cmath>
 
 #include <maths.hpp>
+#include <utils.hpp>
 
-EVector::EVector(sf::Vector2f initOrigin, sf::Vector2f initFinal, sf::Vector2f initDirection)
+EVector::EVector(sf::Vector2f initOrigin, sf::Vector2f initFinal,
+                 float initDirection)
 {
   origin = initOrigin;
   final = initFinal;
   direction = initDirection; 
+}
+
+/* Calculate the direction in radians. */
+void EVector::CalcDir()
+{
+  direction = atan2(final.y - origin.y, final.x - origin.x);
 }
 
 // Otherwise known as the "magnitude"
@@ -22,13 +32,31 @@ float dotProduct(EVector j, EVector i)
          (j.final.x * i.final.x) + (j.final.y * i.final.y);
 }
 /*
-EVector normalize(EVector j)
+EVector scalarMult(EVector j, int i)
 {
-  sf::Vector2f a = sf::Vector2f((j.x.x / euclideanNorm(j)) * e1,
-                              (j.x.y / euclideanNorm(j)) * e1);
-  sf::Vector2f b = sf::Vector2f((j.y.x / euclideanNorm(j)) * e2,
-                              (j.y.y / euclideanNorm(j)) * e2);
-  sf::Vector2f c = sf::Vector2f((j.z.x / euclideanNorm(j)) * e3,
-                              (j.z.y / euclideanNorm(j)) * e3);
-  return EVector(a, b, c);
-}*/
+  return EVector(j.final, sf::Vector2f((j.direction.x * i) * j.final.x,
+                                       (j.direction.y * i) * j.final.y),
+                 j.direction); 
+}
+*/
+
+/*
+EVector add(EVector j, int i)
+{
+  float xaxis = i * cos(j.direction);
+  float yaxis = i * sin(j.direction);
+  return EVector(sf::Vector2f(j.origin.x + xaxis,
+                              j.origin.y + yaxis),
+                 sf::Vector2f(j.final.x + xaxis, 
+                              j.final.y + yaxis), j.direction);
+}
+*/
+
+
+sf::Vector2f normalize(EVector j)
+{
+  float len = euclideanNorm(j);
+  float dx = j.origin.x - j.final.x;
+  float dy = j.origin.y - j.final.y;
+  return sf::Vector2f(dx / len, dy / len);
+}
