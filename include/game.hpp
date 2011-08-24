@@ -12,7 +12,7 @@ struct Player {
   void MouseInput(sf::Vector2f cursor);
   void CheckInput(sf::RenderWindow &win);
   void Move(float x, float y);
-
+  sf::Vector2f CalculateMove(float dir, float speed, float frametime);
 
   EVector mouse; // Vector from the middle of player to the mouse position.
   sf::Sprite sp;

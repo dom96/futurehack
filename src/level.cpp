@@ -59,14 +59,12 @@ void Level::Load(int level)
       sf::Color color = levelImage.GetPixel(x, y);
       if (color == sf::Color::White)
         tile = TileWall;
-      
+      else if (color == sf::Color::Black)
+        tile = TileFloor;
+
       tiles[x][y] = tile;
     }
   }
-
-
-
-
 }
 
 

@@ -136,16 +136,40 @@ void Player::MouseInput(sf::Vector2f cursor)
   sp.SetRotation(angle);
 }
 
+sf::Vector2f Player::CalculateMove(float dir, float speed, float frametime)
+{
+  float multiplier = speed * (frametime / 1000.f);
+  float xaxis = multiplier * cos(dir);
+  float yaxis = multiplier * sin(dir);
+  return sf::Vector2f(xaxis, yaxis);
+}
+
 void Player::CheckInput(sf::RenderWindow &win)
 {
-
-  float multiplier = 110 * (win.GetFrameTime() / 1000.f);
-  float xaxis = multiplier * cos(mouse.direction);
-  float yaxis = multiplier * sin(mouse.direction);
+  float dir = mouse.direction;
+  float frametime = win.GetFrameTime();
 
   if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
   {
-    Move(xaxis, yaxis);
+    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
+    Move(moveBy.x, moveBy.y);
+  }
+  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::S))
+  {
+    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
+    Move(-moveBy.x, -moveBy.y);
+  }
+  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::A))
+  {
+    dir -= 1.57079633;
+    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
+    Move(moveBy.x, moveBy.y);
+  }
+  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::D))
+  {
+    dir += 1.57079633;
+    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
+    Move(moveBy.x, moveBy.y);
   }
 }
 
