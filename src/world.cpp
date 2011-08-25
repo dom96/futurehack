@@ -11,23 +11,10 @@
 
 using namespace std;
 
-World::World(int seed)
+World::World()
 {
-  if (seed != -1)
-    seedUsed = seed;
-  else
-    seedUsed = int(time(NULL));
-  
-  srand(seedUsed); 
-  // Only initialize seed once. Hopefully the seed will be kept
-  // in Level.cpp.
-
-  currentLevel = 25; // Player will have to climb down a 25 story sky scraper :D
-  maxLevels = (rand() % 80) + 26;
+  currentLevel = maxLevels - 1; 
   levels = new Level[maxLevels];
-  // TODO: Create all levels at once?
-  // Create current level.
-  //levels[currentLevel].Generate(currentLevel);
   levels[currentLevel].Load(currentLevel);
 
   mapTexture.Create(levels[currentLevel].levelWidth * TILE_WIDTH,
@@ -89,4 +76,11 @@ void World::DrawMap()
   } 
   mapTexture.Display();
   cout << "Tiles rendered: " << tileCount << endl;
+}
+
+void World::Draw(sf::RenderWindow &win)
+{
+  sf::Sprite mapSprite(mapTexture.GetTexture());
+  mapSprite.SetPosition(0, 0);
+  win.Draw(mapSprite);
 }

@@ -4,15 +4,17 @@
 
 #include <level.hpp>
 
+const int maxLevels = 26;
+
 struct World {
-  World(int seed = -1);
+  World();
   ~World();
   
   void Update();
   void DrawMap();
+  void Draw(sf::RenderWindow &win);
 private:
   int currentLevel;
-  int maxLevels;
   int seedUsed;
   
   sf::RenderTexture mapTexture;

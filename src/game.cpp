@@ -10,10 +10,10 @@ using namespace std;
 const float initialPlayerX = 400.f;
 const float initialPlayerY = 300.f;
 
-Game::Game() :
-  running(false),
-  frames(0)
+Game::Game()
 { 
+  running = false;
+  frames = 0;
 
   // Create & initialize the window.
   win.Create(sf::VideoMode(800, 600), "Futurehack",
@@ -80,6 +80,7 @@ void Game::CheckEvents()
   }
   player.CheckInput(win);
   camera.SetCenter(player.sp.GetPosition());
+  //camera.SetRotation(player.sp.GetRotation());
 }
 
 void Game::Update()
@@ -101,10 +102,8 @@ void Game::Draw()
 {
   win.SetView(camera);
   
-  sf::Sprite mapSprite(world.mapTexture.GetTexture());
-  mapSprite.SetPosition(0, 0);
-  win.Draw(mapSprite);
-  
+  world.Draw(win);
+
   win.Draw(player.sp);
   
   // Camera independent drawing - HUD etc.

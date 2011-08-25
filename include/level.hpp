@@ -14,7 +14,6 @@ struct Level {
   void Load(int floor);
   void Generate(int floor);
   
-private:
   int levelWidth; // In tiles.
   int levelHeight; // In tiles.
   
