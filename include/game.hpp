@@ -10,7 +10,7 @@ struct Player {
   Player();
   void Load(sf::Texture &entities);
   void MouseInput(sf::Vector2f cursor);
-  void CheckInput(sf::RenderWindow &win);
+  void CheckInput(sf::RenderWindow &win, bool focused);
   void Move(float x, float y);
   sf::Vector2f CalculateMove(float dir, float speed, float frametime);
 
@@ -29,6 +29,7 @@ private:
   void Draw();
 
   sf::RenderWindow win;
+  bool winFocused; // Whether the window is focused.
   sf::View camera;
   sf::Clock fpsClock; // Clock for measuring FPS.
   int frames; // A counter of frames rendered.

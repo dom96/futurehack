@@ -14,6 +14,7 @@ Game::Game()
 { 
   running = false;
   frames = 0;
+  winFocused = true;
 
   // Create & initialize the window.
   win.Create(sf::VideoMode(800, 600), "Futurehack",
@@ -71,6 +72,12 @@ void Game::CheckEvents()
       case sf::Event::Closed:
         running = false;
         break;
+      case sf::Event::LostFocus:
+        winFocused = false;
+        break;
+      case sf::Event::GainedFocus:
+        winFocused = true;
+        break;
       case sf::Event::MouseMoved:
         sf::Vector2f pos = sf::Vector2f(event.MouseMove.X,
                                         event.MouseMove.Y);
@@ -78,7 +85,7 @@ void Game::CheckEvents()
         break; 
     }
   }
-  player.CheckInput(win);
+  player.CheckInput(win, winFocused);
   camera.SetCenter(player.sp.GetPosition());
   //camera.SetRotation(player.sp.GetRotation());
 }
@@ -143,32 +150,37 @@ sf::Vector2f Player::CalculateMove(float dir, float speed, float frametime)
   return sf::Vector2f(xaxis, yaxis);
 }
 
-void Player::CheckInput(sf::RenderWindow &win)
+void Player::CheckInput(sf::RenderWindow &win, bool focused)
 {
-  float dir = mouse.direction;
-  float frametime = win.GetFrameTime();
+  if (focused) 
+  {
+    float dir = mouse.direction;
+    float frametime = win.GetFrameTime();
 
-  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
-  {
-    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
-    Move(moveBy.x, moveBy.y);
-  }
-  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::S))
-  {
-    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
-    Move(-moveBy.x, -moveBy.y);
-  }
-  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::A))
-  {
-    dir -= 1.57079633;
-    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
-    Move(moveBy.x, moveBy.y);
-  }
-  if (sf::Keyboard::IsKeyPressed(sf::Keyboard::D))
-  {
-    dir += 1.57079633;
-    sf::Vector2f moveBy = CalculateMove(dir, 110, frametime);
-    Move(moveBy.x, moveBy.y);
+    if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
+    {
+      sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      Move(moveBy.x, moveBy.y);
+    }
+    if (sf::Keyboard::IsKeyPressed(sf::Keyboard::S))
+    {
+      sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      Move(-moveBy.x, -moveBy.y);
+    }
+    if (sf::Keyboard::IsKeyPressed(sf::Keyboard::A))
+    {
+      // Don't allow moving left and right at the same time.
+      if (sf::Keyboard::IsKeyPressed(sf::Keyboard::D)) return;
+      dir -= 1.57079633; // 90 degrees.
+      sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      Move(moveBy.x, moveBy.y);
+    }
+    if (sf::Keyboard::IsKeyPressed(sf::Keyboard::D))
+    {
+      dir += 1.57079633;
+      sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      Move(moveBy.x, moveBy.y);
+    }
   }
 }
 
