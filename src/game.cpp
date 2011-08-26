@@ -154,7 +154,7 @@ void Player::CheckInput(sf::RenderWindow &win, bool focused)
 {
   if (focused) 
   {
-    float dir = mouse.direction;
+    float dir = -1.57079633;
     float frametime = win.GetFrameTime();
 
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
@@ -164,7 +164,7 @@ void Player::CheckInput(sf::RenderWindow &win, bool focused)
     }
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::S))
     {
-      sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      sf::Vector2f moveBy = CalculateMove(+dir, 210, frametime);
       Move(-moveBy.x, -moveBy.y);
     }
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::A))
