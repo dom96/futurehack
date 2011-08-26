@@ -5,6 +5,7 @@
 
 #include <world.hpp>
 #include <maths.hpp>
+#include <animation.hpp>
 
 struct Player {
   Player();
@@ -13,9 +14,10 @@ struct Player {
   void CheckInput(sf::RenderWindow &win, bool focused);
   void Move(float x, float y);
   sf::Vector2f CalculateMove(float dir, float speed, float frametime);
+  void Update();
 
   EVector mouse; // Vector from the middle of player to the mouse position.
-  sf::Sprite sp;
+  AnimatedSprite sp;
 };
 
 struct Game {

@@ -103,6 +103,7 @@ void Game::Update()
   frames++;
   
   world.Update();
+  player.Update();
 }
 
 void Game::Draw()
@@ -126,10 +127,14 @@ Player::Player() :
 void Player::Load(sf::Texture &entities)
 {
   sp.SetTexture(entities);
-  sp.SetSubRect(sf::IntRect(3, 3, 64, 64));
+  // Add animation frames.
+  sp.AddFrame(sf::IntRect(3, 3, 64, 64)); // Default frame
+  sp.AddFrame(sf::IntRect(71, 3, 64, 64));
+  sp.AddFrame(sf::IntRect(139, 3, 64, 64));
+  sp.SetFrame(0);
+
   sp.SetX(initialPlayerX); sp.SetY(initialPlayerY);
   mouse.origin.x = initialPlayerX; mouse.origin.y = initialPlayerY;
-  //sf::FloatRect playerSize = player.GetRect();
   sp.SetOrigin(32, 32);
 }
 
@@ -160,11 +165,13 @@ void Player::CheckInput(sf::RenderWindow &win, bool focused)
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
     {
       sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      sp.Animate();
       Move(moveBy.x, moveBy.y);
     }
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::S))
     {
-      sf::Vector2f moveBy = CalculateMove(+dir, 210, frametime);
+      sf::Vector2f moveBy = CalculateMove(+dir, 210, frametime); 
+      sp.Animate();
       Move(-moveBy.x, -moveBy.y);
     }
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::A))
@@ -173,12 +180,14 @@ void Player::CheckInput(sf::RenderWindow &win, bool focused)
       if (sf::Keyboard::IsKeyPressed(sf::Keyboard::D)) return;
       dir -= 1.57079633; // 90 degrees.
       sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      sp.Animate();
       Move(moveBy.x, moveBy.y);
     }
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::D))
     {
       dir += 1.57079633;
       sf::Vector2f moveBy = CalculateMove(dir, 210, frametime);
+      sp.Animate();
       Move(moveBy.x, moveBy.y);
     }
   }
@@ -189,4 +198,9 @@ void Player::Move(float x, float y)
   sp.Move(x, y);
   //mouse.origin.x += x;
   //mouse.origin.y += y;
+}
+
+void Player::Update()
+{
+  sp.Update(); // Check if animation should be stopped.
 }
