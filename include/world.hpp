@@ -13,6 +13,7 @@ struct World {
   void Update();
   void DrawMap();
   void Draw(sf::RenderWindow &win);
+  bool CollidesWith(TileType tile, sf::FloatRect rect);
 private:
   int currentLevel;
   int seedUsed;

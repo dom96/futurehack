@@ -10,7 +10,8 @@ using namespace std;
 const float initialPlayerX = 400.f;
 const float initialPlayerY = 300.f;
 
-Game::Game()
+Game::Game() :
+  player(this)
 { 
   running = false;
   frames = 0;
@@ -50,12 +51,12 @@ int Game::Run()
   while (running && win.IsOpened())
   {
     win.Clear();
-    
-    CheckEvents();
-    
+     
     Update();
     
     Draw();
+   
+    CheckEvents();
     
     win.Display();
   }
@@ -85,7 +86,7 @@ void Game::CheckEvents()
         break; 
     }
   }
-  player.CheckInput(win, winFocused);
+  player.CheckInput(winFocused);
   camera.SetCenter(player.sp.GetPosition());
   //camera.SetRotation(player.sp.GetRotation());
 }
@@ -120,8 +121,9 @@ void Game::Draw()
   win.Draw(fpsText);
 }
 
-Player::Player() :
-  mouse(sf::Vector2f(0, 0), sf::Vector2f(0, 0), 0)
+Player::Player(Game *refGame) :
+  mouse(sf::Vector2f(0, 0), sf::Vector2f(0, 0), 0),
+  game(refGame)
 { }
 
 void Player::Load(sf::Texture &entities)
@@ -155,12 +157,12 @@ sf::Vector2f Player::CalculateMove(float dir, float speed, float frametime)
   return sf::Vector2f(xaxis, yaxis);
 }
 
-void Player::CheckInput(sf::RenderWindow &win, bool focused)
+void Player::CheckInput(bool focused)
 {
   if (focused) 
   {
     float dir = -1.57079633;
-    float frametime = win.GetFrameTime();
+    float frametime = game->win.GetFrameTime();
 
     if (sf::Keyboard::IsKeyPressed(sf::Keyboard::W))
     {
@@ -195,9 +197,17 @@ void Player::CheckInput(sf::RenderWindow &win, bool focused)
 
 void Player::Move(float x, float y)
 {
-  sp.Move(x, y);
-  //mouse.origin.x += x;
-  //mouse.origin.y += y;
+  cout << x << " " << y << endl;
+  sf::Vector2f curPos = sp.GetPosition();
+  sf::Vector2f curCenter = sp.GetOrigin();
+  sf::Vector2f curSize = sp.GetSize();
+  sf::FloatRect rect(curPos.x + x - (curCenter.x / 2), 
+                     curPos.y + y - (curCenter.y / 2),
+                     64, 64);
+  if (!game->world.CollidesWith(TileWall, rect))
+  {
+    sp.Move(x, y);
+  }
 }
 
 void Player::Update()

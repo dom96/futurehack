@@ -7,17 +7,21 @@
 #include <maths.hpp>
 #include <animation.hpp>
 
+struct Game;
+
 struct Player {
-  Player();
+  Player(Game *refGame);
   void Load(sf::Texture &entities);
   void MouseInput(sf::Vector2f cursor);
-  void CheckInput(sf::RenderWindow &win, bool focused);
+  void CheckInput(bool focused);
   void Move(float x, float y);
   sf::Vector2f CalculateMove(float dir, float speed, float frametime);
   void Update();
 
   EVector mouse; // Vector from the middle of player to the mouse position.
   AnimatedSprite sp;
+  
+  Game *game;
 };
 
 struct Game {
@@ -37,6 +41,7 @@ private:
   int frames; // A counter of frames rendered.
   sf::Font entityFont; // Font used for entities: player, enemies etc.
   sf::Texture entities; // Entities texture
+  friend struct Player;
   Player player;
   sf::Text fpsText;
   bool running;

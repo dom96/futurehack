@@ -1,4 +1,4 @@
-CC	:= clang
+CC	:= g++
 IFLAGS 	:= -I include/
 CFLAGS	:= -Wall -Wextra -Wno-switch-enum
 DFLAGS	:= -g -DDEBUG

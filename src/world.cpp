@@ -84,3 +84,22 @@ void World::Draw(sf::RenderWindow &win)
   mapSprite.SetPosition(0, 0);
   win.Draw(mapSprite);
 }
+
+bool World::CollidesWith(TileType tile, sf::FloatRect rect)
+{
+  // Get tile at `pos`.
+  assert(rect.Left >= 0 && rect.Top >= 0);
+  int x = round(rect.Left / TILE_WIDTH);
+  int y = round(rect.Top / TILE_HEIGHT);
+  cout << "Tile x: " << x << " y: " << y << endl;
+  cout << "Rect x: " << rect.Left << " y: " << rect.Top << endl;
+  
+  if (levels[currentLevel].tiles[x][y] == tile)
+  {    
+    sf::FloatRect tileRect(x * TILE_WIDTH, y * TILE_HEIGHT,
+                         TILE_WIDTH, TILE_HEIGHT);
+    if (tileRect.Intersects(rect)) return true;
+  }
+
+  return false;
+}
