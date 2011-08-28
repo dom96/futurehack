@@ -8,10 +8,12 @@
 
 #include <world.hpp>
 #include <level.hpp>
+#include <game.hpp>
 
 using namespace std;
 
-World::World()
+World::World(Game *refGame) :
+  game(refGame)
 {
   currentLevel = maxLevels - 1; 
   levels = new Level[maxLevels];
@@ -93,12 +95,30 @@ bool World::CollidesWith(TileType tile, sf::FloatRect rect)
   int y = round(rect.Top / TILE_HEIGHT);
   cout << "Tile x: " << x << " y: " << y << endl;
   cout << "Rect x: " << rect.Left << " y: " << rect.Top << endl;
-  
-  if (levels[currentLevel].tiles[x][y] == tile)
-  {    
-    sf::FloatRect tileRect(x * TILE_WIDTH, y * TILE_HEIGHT,
-                         TILE_WIDTH, TILE_HEIGHT);
-    if (tileRect.Intersects(rect)) return true;
+
+  if (game->debug)
+  {
+    game->win.SetView(game->camera);
+    sf::Shape rRect = sf::Shape::Rectangle(rect, sf::Color::Green);
+    game->win.Draw(rRect);
+  }
+
+  for (int j = -1; j < 2; j++)
+  { 
+    for (int i = -1; i < 2; i++)
+    {
+      if (levels[currentLevel].tiles[x+j][y+i] == tile)
+      {    
+        sf::FloatRect tileRect((x+j) * TILE_WIDTH, (y+i) * TILE_HEIGHT,
+                               TILE_WIDTH, TILE_HEIGHT);
+        if (game->debug)
+        {
+          sf::Shape rTRect = sf::Shape::Rectangle(tileRect, sf::Color::Blue);
+          game->win.Draw(rTRect);
+        }
+        if (tileRect.Intersects(rect)) return true;
+      }
+    }
   }
 
   return false;

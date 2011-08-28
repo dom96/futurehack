@@ -45,7 +45,10 @@ private:
   Player player;
   sf::Text fpsText;
   bool running;
+  friend struct World;
   World world;
+
+  bool debug;
 };
 
 

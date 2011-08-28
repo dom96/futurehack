@@ -1,8 +1,8 @@
 #ifndef LEVEL_HPP
 #define LEVEL_HPP
 
-const int TILE_WIDTH = 32;
-const int TILE_HEIGHT = 32;
+const int TILE_WIDTH = 64;
+const int TILE_HEIGHT = 64;
 
 enum TileType {
   TileNone, TileFloor, TileWall, TileWindow, TileDoor

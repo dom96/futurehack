@@ -6,8 +6,10 @@
 
 const int maxLevels = 26;
 
+struct Game;
+
 struct World {
-  World();
+  World(Game *refGame);
   ~World();
   
   void Update();
@@ -22,6 +24,8 @@ private:
   
   Level* levels; // Initialized at runtime.
   // Monsters should <del>not</del> be separated per level.
+
+  Game *game; // Useful for debugging. 
 };
 
 #endif // WORLD_HPP

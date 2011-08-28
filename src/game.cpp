@@ -11,11 +11,13 @@ const float initialPlayerX = 400.f;
 const float initialPlayerY = 300.f;
 
 Game::Game() :
-  player(this)
+  player(this),
+  world(this)
 { 
   running = false;
   frames = 0;
   winFocused = true;
+  debug = false;
 
   // Create & initialize the window.
   win.Create(sf::VideoMode(800, 600), "Futurehack",
@@ -80,10 +82,27 @@ void Game::CheckEvents()
         winFocused = true;
         break;
       case sf::Event::MouseMoved:
-        sf::Vector2f pos = sf::Vector2f(event.MouseMove.X,
-                                        event.MouseMove.Y);
-        player.MouseInput(pos);
-        break; 
+        {
+          sf::Vector2f pos = sf::Vector2f(event.MouseMove.X,
+                                          event.MouseMove.Y);
+          player.MouseInput(pos);
+          break;
+        }
+      case sf::Event::KeyPressed:
+        {
+          switch (event.Key.Code)
+          {
+            case sf::Keyboard::F3: 
+              debug = debug ? false : true ;
+              break;
+            case sf::Keyboard::Escape:
+              running = false;
+              break;
+            default: NULL;
+          }
+          break;
+        }
+      default: NULL;
     }
   }
   player.CheckInput(winFocused);
@@ -135,7 +154,7 @@ void Player::Load(sf::Texture &entities)
   sp.AddFrame(sf::IntRect(139, 3, 64, 64));
   sp.SetFrame(0);
 
-  sp.SetX(initialPlayerX); sp.SetY(initialPlayerY);
+  sp.SetPosition(initialPlayerX, initialPlayerY);
   mouse.origin.x = initialPlayerX; mouse.origin.y = initialPlayerY;
   sp.SetOrigin(32, 32);
 }
@@ -201,9 +220,10 @@ void Player::Move(float x, float y)
   sf::Vector2f curPos = sp.GetPosition();
   sf::Vector2f curCenter = sp.GetOrigin();
   sf::Vector2f curSize = sp.GetSize();
-  sf::FloatRect rect(curPos.x + x - (curCenter.x / 2), 
-                     curPos.y + y - (curCenter.y / 2),
-                     64, 64);
+  sf::IntRect boundBox(14, 9, 35, 45);
+  sf::FloatRect rect(curPos.x + x - curCenter.x + boundBox.Left, 
+                     curPos.y + y - curCenter.y + boundBox.Top,
+                     boundBox.Width, boundBox.Height);
   if (!game->world.CollidesWith(TileWall, rect))
   {
     sp.Move(x, y);
